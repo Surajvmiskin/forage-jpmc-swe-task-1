@@ -1,3 +1,5 @@
+#! D:\Coding\JP_coding\myenv\Scripts\python.exe
+
 ################################################################################
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a
@@ -262,6 +264,25 @@ class App(object):
         self._rt_start = datetime.now()
         self._sim_start, _, _ = next(self._data_1)
         self.read_10_first_lines()
+        # Try to get the first values from the iterators
+        try:
+            self._sim_start, _, _ = next(self._data_1)
+        except StopIteration:
+            # Handle the end of the iterator, possibly reinitialize or raise an error
+            print("Iterator _data_1 has reached its end. Reinitializing...")
+            self._data_1 = order_book(read_csv(), self._book_1, 'ABC')
+            self._sim_start, _, _ = next(self._data_1)
+
+        # Similar handling for _data_2
+        try:
+            next(self._data_2)
+        except StopIteration:
+            print("Iterator _data_2 has reached its end. Reinitializing...")
+            self._data_2 = order_book(read_csv(), self._book_2, 'DEF')
+            next(self._data_2)
+
+        self.read_10_first_lines()
+        
 
     @property
     def _current_book_1(self):
